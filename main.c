@@ -4,6 +4,8 @@
 
 #define MAX_PRODUCTS 100
 #define MAX_CART_ITEMS 10
+#define TAX 0.13
+#define SHIPPING 5.99
 
 // Structure to represent a product
 struct Product {
@@ -333,23 +335,25 @@ void displayCart(struct CartItem cart[], int cartItemCount) {
 
 /// Displays the bill for the items in the cart.
 void generateBill(struct CartItem cart[], int cartItemCount) {
+  float total = 0.0, itemTotal, tax;
   if (cartItemCount > 0) {
-    float total = 0.0;
 
     printf("\n=== Bill ===\n");
-    printf("%-4s %-20s %-15s %-10s %s\n", "ID", "Name", "Category", "Price", "Quantity");
-    printf("------------------------------------------------------------\n");
+    printf("%-4s %-20s %-15s %-10s %-10s %s\n", "ID", "Name", "Category", "Price", "Tax", "Quantity");
+    printf("-----------------------------------------------------------------------------\n");
 
     for (int i = 0; i < cartItemCount; i++) {
-      float itemTotal = cart[i].product.price * cart[i].quantity;
+      tax = cart[i].product.price * TAX;
+      itemTotal = (cart[i].product.price + tax) * cart[i].quantity + SHIPPING;
       total += itemTotal;
 
-      printf("%-4d %-20s %-15s $%-9.2f %d\n",
-      cart[i].product.id, cart[i].product.name, cart[i].product.category, cart[i].product.price, cart[i].quantity);
+      printf("%-4d %-20s %-15s $%-9.2f $%-9.2f %d\n",
+      cart[i].product.id, cart[i].product.name, cart[i].product.category, cart[i].product.price, tax, cart[i].quantity );
     }
 
-    printf("------------------------------------------------------------\n");
-    printf("%-50s $%-9.2f\n", "Total:", total);
+    printf("-----------------------------------------------------------------------------\n");
+    printf("%-60s $%-9.2f\n", "Shipping:", SHIPPING);
+    printf("%-60s $%-9.2f\n", "Total:", total);
   } else {
     printf("\n------------------------------------------------------------\n");
     printf("The cart is empty. Add items to the cart before generating the bill.\n");
